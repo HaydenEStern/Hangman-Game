@@ -1,5 +1,3 @@
-document.getElementById("start").onclick = function(event) {
-
 
     var guessCounter = 12;
     var winCounter = 0;
@@ -9,10 +7,27 @@ document.getElementById("start").onclick = function(event) {
     var splitWord = [];
     var wordBlank = [];
     var userInput = "";
-    var gameText = document.getElementById("game-text");
-    var BlankSpan;
+    var blankSpan;
     var guessedLetters = [];
     var isGuessed;
+    var word = document.getElementById("word");
+
+document.getElementById("start").onclick = function(event) {
+	    startGame();
+	    };
+document.getElementById("reset").onclick = function(event) {
+while (word.firstChild) {
+    word.removeChild(word.firstChild);
+};
+	startGame();
+};
+
+    document.onkeyup = function(event) {
+        userInput = event.key;
+        replaceBlanks();
+
+    };
+
 
 
     //clear wor
@@ -30,6 +45,7 @@ document.getElementById("start").onclick = function(event) {
         for (i = 0; i < splitWord.length; i++) {
             blankSpan = document.createElement("span");
             blankSpan.innerHTML = "_ ";
+            blankSpan.className += " blank";
             word.appendChild(blankSpan);
         };
     };
@@ -44,6 +60,7 @@ document.getElementById("start").onclick = function(event) {
 
     // replace the blanks with the selected letter
     function replaceBlanks() {
+    if (guessedLetters.length > 0) {
     	guessedLetters.forEach(function(element) {
     		if (element === userInput) {
     			isGuessed = true;
@@ -56,6 +73,12 @@ document.getElementById("start").onclick = function(event) {
     		guessCounter --;
     		document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
     	};
+    }
+
+    else if (guessedLetters.length === 0) {
+    	guessCounter --;
+    		document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
+    };
 
         guessedLetters.push(userInput);
 
@@ -63,7 +86,7 @@ document.getElementById("start").onclick = function(event) {
         // loop over the length of splitword to see if there's a match, if there's a match, replace the correct span w userinput
         for (i = 0; i < splitWord.length; i++) {
             if (userInput === splitWord[i]) {
-                word.childNodes[i].innerHTML = userInput;
+                word.childNodes[i].innerHTML = userInput + " ";
 
 
             };
@@ -77,16 +100,3 @@ document.getElementById("start").onclick = function(event) {
 
 
 
-
-
-    startGame();
-
-    // hangman.splitBlank();
-    // stores key pressed by user as the value of the userInput key inside the hangman object
-    document.onkeyup = function(event) {
-        userInput = event.key;
-        replaceBlanks();
-
-    };
-
-};
