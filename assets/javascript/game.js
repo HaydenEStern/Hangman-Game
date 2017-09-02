@@ -15,7 +15,7 @@ var correctLetters = 0;
 
 // set up the game by clicking the start button
 document.getElementById("start").onclick = function(event) {
-    startGame();
+    resetGame();
 };
 
 // reset and launch a game with a new word and 12 new guesses by clicking the reset game button
@@ -68,7 +68,7 @@ function resetGame() {
         word.removeChild(word.firstChild);
     };
     startGame();
-    guessCounter = 12;
+    guessCounter = 15;
     document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
     guessedLetters = [];
 };
