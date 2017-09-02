@@ -2,7 +2,7 @@
 // declare all global variables
 var guessCounter = 12;
 var winCounter = 0;
-var words = ["terezi", "davesprite", "karkat", "vriska", "ferferi", "rose"];
+var words = ["terezi", "davesprite", "karkat", "vriska", "ferferi", "rose", "kanaya", "gamzee", "sollux", "eridan", ];
 var activeWord = "";
 var splitWord = [];
 var wordBlank = [];
@@ -10,23 +10,20 @@ var userInput = "";
 var guessedLetters = [];
 var isGuessed;
 var word = document.getElementById("word");
+var correctLetters = 0;
+
 
 // set up the game by clicking the start button
 document.getElementById("start").onclick = function(event) {
     startGame();
 };
 
-
+// reset and launch a game with a new word and 12 new guesses by clicking the reset game button
 document.getElementById("reset").onclick = function(event) {
-    while (word.firstChild) {
-        word.removeChild(word.firstChild);
-    };
-    startGame();
-    guessCounter = 12;
-    document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
-    guessedLetters = [];
+	resetGame();
 };
 
+// launch function to connect user keyboard input to gameplay
 document.onkeyup = function(event) {
     userInput = event.key;
     replaceBlanks();
@@ -34,23 +31,24 @@ document.onkeyup = function(event) {
 };
 
 
-
-//clear wor
-// randomly selects a word from the words array
+// below are functions associated with gameplay
+// randomly selects a word from the words array and stores it into the activeWord variable
 function pickWords() {
     activeWord = words[Math.floor(Math.random() * words.length)];
 };
-// splits the string into an array with one letter per index and stores it as a new key
+
+// splits the string into an array with one letter per index and stores it as a new variable
 function splitWords() {
     splitWord = activeWord.split("");
 };
-// loops over the split array to put one underscore per character into a <span> tag
+
+// loops over the split array to put one underscore per character into a series of <span> tags
 // this displays the blanks
 function makeBlanks() {
     for (i = 0; i < splitWord.length; i++) {
         var blankSpan = document.createElement("span");
         blankSpan.innerHTML = "_ ";
-        blankSpan.className += " blank";
+        blankSpan.classList.add("blank");
         word.appendChild(blankSpan);
     };
 };
@@ -63,7 +61,20 @@ function startGame() {
 
 };
 
-// replace the blanks with the selected letter
+
+// resets guess counter, guessed letters, and removes span elements. Uses startGame function to launch a new game
+function resetGame() {
+	    while (word.firstChild) {
+        word.removeChild(word.firstChild);
+    };
+    startGame();
+    guessCounter = 12;
+    document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
+    guessedLetters = [];
+};
+
+
+// replace the blanks with the selected letter, lower the guess counter if the user has not previously guessed that letter
 function replaceBlanks() {
     if (guessedLetters.length > 0) {
         guessedLetters.forEach(function(element) {
@@ -81,7 +92,7 @@ function replaceBlanks() {
         guessCounter--;
         document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
     };
-
+    // push guessed letters to an array
     guessedLetters.push(userInput);
 
 
@@ -89,12 +100,21 @@ function replaceBlanks() {
     for (i = 0; i < splitWord.length; i++) {
         if (userInput === splitWord[i]) {
             word.childNodes[i].innerHTML = userInput + " ";
+            correctLetters++;
 
 
         };
-
+        if (correctLetters === splitWord.length) {
+    	document.getElementById("guesses").innerHTML = "You win";
     };
-    if (guessCounter <= 0) {
+    };
+
+
+
+    
+    // if the guess counter reaches zero, inform the player that they have lost the game
+    if (guessCounter === 0) {
         document.getElementById("guesses").innerHTML = "You lose";
     };
 };
+
