@@ -1,4 +1,3 @@
-
 // declare all global variables
 var guessCounter = 12;
 var winCounter = 0;
@@ -10,8 +9,8 @@ var userInput = "";
 var guessedLetters = [];
 var isGuessed;
 var word = document.getElementById("word");
-var correctLetters = 0;
-
+var correctGuesses = [];
+var hasWon;
 
 // set up the game by clicking the start button
 document.getElementById("start").onclick = function(event) {
@@ -21,6 +20,8 @@ document.getElementById("start").onclick = function(event) {
 // reset and launch a game with a new word and 12 new guesses by clicking the reset game button
 document.getElementById("reset").onclick = function(event) {
 	resetGame();
+	winCounter = 0;
+	document.getElementById("wins").innerHTML = "Wins:" + winCounter;
 };
 
 // launch function to connect user keyboard input to gameplay
@@ -71,7 +72,22 @@ function resetGame() {
     guessCounter = 15;
     document.getElementById("guesses").innerHTML = "Guesses remaining: " + guessCounter;
     guessedLetters = [];
+    correctGuesses = [];
+    hasWon = false;
 };
+
+// compare two arrays to see if their content is identical or not
+Array.prototype.compare = function(testArr) {
+    if (this.length != testArr.length) return false;
+    for (var i = 0; i < testArr.length; i++) {
+        if (this[i].compare) { 
+            if (!this[i].compare(testArr[i])) return false;
+        }
+        else if (this[i] !== testArr[i]) return false;
+    }
+    return true;
+};
+
 
 
 // replace the blanks with the selected letter, lower the guess counter if the user has not previously guessed that letter
@@ -96,18 +112,36 @@ function replaceBlanks() {
     guessedLetters.push(userInput);
 
 
-    // loop over the length of splitword to see if there's a match, if there's a match, replace the correct span w userinput
+    // loop over the length of splitword to see if there's a match, if there's a match, replace the correct span w userinput, and
+    // push userInput to an array of correct guesses
     for (i = 0; i < splitWord.length; i++) {
-        if (userInput === splitWord[i]) {
+        if (userInput === splitWord[i]) {      	
             word.childNodes[i].innerHTML = userInput + " ";
-            correctLetters++;
+            correctGuesses.push(userInput);
 
-
+            
         };
-        if (correctLetters === splitWord.length) {
+
+    };
+    // copy the correct guesses array and the split word array
+    	var guessedClone = correctGuesses.slice(0);
+		var splitClone = splitWord.slice(0);
+	// use sorting algorithm to see if they contain the same letters
+   			if(guessedClone.sort().compare(splitClone.sort())) {
+   	// if they do, set hasWon to true
+    		hasWon = true;
+}
+	else {
+		hasWon = false
+	};
+
+
+        if (hasWon === true) {
     	document.getElementById("guesses").innerHTML = "You win";
+    	winCounter++;
+    	document.getElementById("wins").innerHTML = "Wins:" + winCounter;
     };
-    };
+
 
 
 
@@ -117,4 +151,3 @@ function replaceBlanks() {
         document.getElementById("guesses").innerHTML = "You lose";
     };
 };
-
